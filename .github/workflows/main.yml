@@ -1,0 +1,39 @@
+name: build-and-push
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths-ignore:
+      - 'README.md'
+  pull_request:
+    branches: [master]
+
+jobs:
+  build:
+    runs-on: self-hosted
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Build dist
+        run: |
+          pnpm install --frozen-lockfile --production
+          pnpm build
+
+      - name: Build img and push
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: harbor.ncuos.com/incu-be/simple-space:latest
+
+      - name: Rancher Redeploy
+        uses: MultiMx/RancherRedeployAction@v3.0
+        with:
+          backend: 'https://rancher.ncuhome.club'
+          token: ${{ secrets.RANCHER_TOKEN }}
+          project: 'local:p-6znhm'
+          namespace: 'simple-space-be'
+          workload: 'test'
