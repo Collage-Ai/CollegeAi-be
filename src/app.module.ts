@@ -5,6 +5,9 @@ import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
+import { ChatModule } from './chat/chat.module';
+import { SModule } from './ai/s/s.module';
+import { AiModule } from './ai/ai.module';
 
 @Module({
   imports: [
@@ -20,6 +23,9 @@ import { User } from './user/entities/user.entity';
       entities: [User],
       charset: 'utf8mb4',
     }),
+    ChatModule,
+    SModule,
+    AiModule,
   ],
   controllers: [AppController],
   providers: [AppService],
