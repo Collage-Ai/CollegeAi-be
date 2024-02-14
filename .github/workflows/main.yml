@@ -19,7 +19,7 @@ jobs:
 
       - name: Build dist
         run: |
-          pnpm install --frozen-lockfile --production
+          pnpm install --frozen-lockfile
           pnpm run build
 
       - name: Build img and push
