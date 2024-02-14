@@ -27,13 +27,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: harbor.ncuos.com/incu-be/simple-space:latest
+          tags: tsingper/simple-space:latest
 
-      - name: Rancher Redeploy
-        uses: MultiMx/RancherRedeployAction@v3.0
-        with:
-          backend: 'https://rancher.ncuhome.club'
-          token: ${{ secrets.RANCHER_TOKEN }}
-          project: 'local:p-6znhm'
-          namespace: 'simple-space-be'
-          workload: 'test'
