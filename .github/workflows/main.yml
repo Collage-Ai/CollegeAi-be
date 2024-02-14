@@ -20,7 +20,7 @@ jobs:
       - name: Build dist
         run: |
           pnpm install --frozen-lockfile --production
-          pnpm build
+          pnpm run build
 
       - name: Build img and push
         uses: docker/build-push-action@v5
@@ -28,4 +28,3 @@ jobs:
           context: .
           push: true
           tags: tsingper/simple-space:latest
-
