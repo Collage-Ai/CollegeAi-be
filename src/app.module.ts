@@ -6,11 +6,13 @@ import { AuthModule } from './auth/auth.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
 import { ChatModule } from './chat/chat.module';
-import { SModule } from './ai/s/s.module';
-import { AiModule } from './ai/ai.module';
-
+import { AIModule } from './ai/ai.module';
+import { ConfigModule } from '@nestjs/config';
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
     UserModule,
     AuthModule,
     TypeOrmModule.forRoot({
@@ -24,8 +26,7 @@ import { AiModule } from './ai/ai.module';
       charset: 'utf8mb4',
     }),
     ChatModule,
-    SModule,
-    AiModule,
+    AIModule,
   ],
   controllers: [AppController],
   providers: [AppService],

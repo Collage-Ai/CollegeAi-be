@@ -6,8 +6,8 @@ export class AIService {
   constructor(private httpService: HttpService) {}
 
   async getAIResponse(message: string): Promise<string> {
-    const aiApiUrl = 'YOUR_AI_SERVICE_API_ENDPOINT'; // 替换为实际的AI服务API端点
-    const apiKey = 'YOUR_AI_SERVICE_API_KEY'; // 替换为您的API密钥
+    const aiApiUrl = process.env.API_URL
+    const apiKey = process.env.API_KEY
 
     try {
       const response = await this.httpService.post(
