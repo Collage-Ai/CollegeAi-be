@@ -27,8 +27,11 @@ export class AuthService {
     }
   }
 
-  getUserIdByToken(token: string): string {
+  getUserIdByToken(token: string|string[]): string {
     try {
+      if (Array.isArray(token)) {
+        token = token[0];
+      }
       const { sub } = this.jwtService.verify(token);
       return sub;
     } catch (err) {
