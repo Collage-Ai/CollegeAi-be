@@ -2,11 +2,13 @@ import { Injectable } from '@nestjs/common';
 import { AIService } from '../ai/ai.service';
 import { Repository } from 'typeorm';
 import { Chat } from './entities/chat.entity';
+import { InjectRepository } from '@nestjs/typeorm';
 
 @Injectable()
 export class ChatService {
   constructor(
     private aiService: AIService,
+    @InjectRepository(Chat)
     private chatRepository: Repository<Chat>,
     ) {}
 

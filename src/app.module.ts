@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
-import { AuthModule } from './auth/auth.module';
+import { AuthModule } from './auth/auth.module'; // AuthService 应该在这个模块中提供
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from './user/entities/user.entity';
 import { ChatModule } from './chat/chat.module';
@@ -12,13 +12,14 @@ import { GlobalInterceptor } from './interceptor/global.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { WinstonLoggerService } from './interceptor/wiston-logger.service';
 import { AuthService } from './auth/auth.service';
+
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
     }),
     UserModule,
-    AuthModule,
+    //AuthModule, // 包含 AuthService
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST || 'localhost',
@@ -31,19 +32,18 @@ import { AuthService } from './auth/auth.service';
     }),
     ChatModule,
     AIModule,
-    WinstonLoggerService,
   ],
   controllers: [AppController],
   providers: [
     AppService,
-    AuthModule,
     {
       provide: APP_INTERCEPTOR,
-      useFactory: (authService: AuthService, winston: WinstonLoggerService) => {
-        return new GlobalInterceptor(winston, authService);
+      useFactory: ( winston: WinstonLoggerService) => {
+        return new GlobalInterceptor(winston);
       },
-      inject: [AuthService, WinstonLoggerService], // 这里列出GlobalInterceptor依赖的服务
+      inject: [WinstonLoggerService], // 这里列出GlobalInterceptor依赖的服务
     },
+    WinstonLoggerService, // 提供 WinstonLoggerService
   ],
 })
 export class AppModule {}

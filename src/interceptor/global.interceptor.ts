@@ -15,7 +15,6 @@ import { AuthService } from 'src/auth/auth.service';
 export class GlobalInterceptor implements NestInterceptor {
   constructor(
     private readonly logger: WinstonLoggerService,
-    private readonly authService: AuthService,
   ) {}
 
   intercept(context: ExecutionContext, next: CallHandler): Observable<any> {
@@ -34,15 +33,16 @@ export class GlobalInterceptor implements NestInterceptor {
           const status = error.getStatus();
           // 如果遇到401错误且是Token过期
           if (status === 401 && error.getResponse().toString().includes('Token expired')) {
-            const token = req.headers.authorization.split(' ')[1]; // 获取Token
-            // 使用from将Promise转换为Observable
-            return from(this.authService.refreshToken(token)).pipe(
-              tap(newToken => {
-                req.headers.authorization = `Bearer ${newToken}`; // 更新请求头的Token
-              }),
-              switchMap(() => next.handle()), // 使用新Token重试请求
-              catchError(refreshError => throwError(refreshError)) // 处理Token刷新失败的情况
-            );
+            // const token = req.headers.authorization.split(' ')[1]; // 获取Token
+            // // 使用from将Promise转换为Observable
+            // return from(this.authService.refreshToken(token)).pipe(
+            //   tap(newToken => {
+            //     req.headers.authorization = `Bearer ${newToken}`; // 更新请求头的Token
+            //   }),
+            //   switchMap(() => next.handle()), // 使用新Token重试请求
+            //   catchError(refreshError => throwError(refreshError)) // 处理Token刷新失败的情况
+            // );
+            return throwError(() => new UnauthorizedException('Token expired'));
           } else {
             // 对于非Token过期的HttpException，直接返回错误信息
             return throwError(() => new HttpException({ statusCode: status, msg: error.message, data: null }, status));
