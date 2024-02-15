@@ -8,9 +8,9 @@ import { User } from './user/entities/user.entity';
 import { ChatModule } from './chat/chat.module';
 import { AIModule } from './ai/ai.module';
 import { ConfigModule } from '@nestjs/config';
-import { GlobalInterceptor } from './global/global.interceptor';
+import { GlobalInterceptor } from './interceptor/global.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { WinstonLoggerService } from './global/wiston-logger.service';
+import { WinstonLoggerService } from './interceptor/wiston-logger.service';
 import { AuthService } from './auth/auth.service';
 @Module({
   imports: [
@@ -31,7 +31,7 @@ import { AuthService } from './auth/auth.service';
     }),
     ChatModule,
     AIModule,
-    WinstonLoggerService
+    WinstonLoggerService,
   ],
   controllers: [AppController],
   providers: [
@@ -39,10 +39,10 @@ import { AuthService } from './auth/auth.service';
     AuthModule,
     {
       provide: APP_INTERCEPTOR,
-      useFactory: (authService: AuthService, winston:WinstonLoggerService) => {
-        return new GlobalInterceptor(winston,authService);
+      useFactory: (authService: AuthService, winston: WinstonLoggerService) => {
+        return new GlobalInterceptor(winston, authService);
       },
-      inject: [AuthService,WinstonLoggerService], // 这里列出GlobalInterceptor依赖的服务
+      inject: [AuthService, WinstonLoggerService], // 这里列出GlobalInterceptor依赖的服务
     },
   ],
 })
