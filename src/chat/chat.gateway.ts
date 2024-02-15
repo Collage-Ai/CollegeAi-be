@@ -11,7 +11,7 @@ import { Server, Socket } from 'socket.io';
 import { ChatService } from './chat.service';
 import { AuthService } from 'src/auth/auth.service';
 
-@WebSocketGateway()
+@WebSocketGateway({namespace: 'chat'})
 export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Server;
 
@@ -21,6 +21,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {}
 
   async handleConnection(@ConnectedSocket() client: Socket) {
+    console.log('New connection:', client.id);
     const { token } = client.handshake.query;
     const userId = await this.authService.getUserIdByToken(token);
 
