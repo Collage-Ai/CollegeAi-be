@@ -56,6 +56,23 @@ export class AuthService {
   }
 
   /**
+   * @description: 刷新token
+   * @param {string} token
+   * @return {string} token
+   * */
+  async refreshToken(token: string): Promise<string> {
+    try {
+      const { name, sub } = this.jwtService.verify(token);
+      return this.jwtService.sign({
+        name,
+        sub,
+      });
+    } catch (error) {
+      return error;
+    }
+  }
+
+  /**
    * @description: 登录
    * @param {string} name
    * @param {string} password

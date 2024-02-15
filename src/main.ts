@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { GlobalInterceptor } from './global/global.interceptor';
 
 declare const module: any;
 
