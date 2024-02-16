@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { ChatService } from './chat.service';
-import { ChatGateway } from './chat.gateway';
 import { AIModule } from 'src/ai/ai.module';
 import { AuthService } from 'src/auth/auth.service';
 import { AuthModule } from 'src/auth/auth.module';
@@ -11,7 +10,7 @@ import { Chat } from './entities/chat.entity';
   imports: [
     TypeOrmModule.forFeature([Chat]),
     AIModule,AuthModule],
-  providers: [ChatGateway, ChatService],
+  providers: [ChatService],
   exports: [ChatService],
 })
 export class ChatModule {}
