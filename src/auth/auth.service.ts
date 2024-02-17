@@ -1,7 +1,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
-import { LoginUserDto } from './dto/login-user.dto';
+import { LoginUserDto, LoginUserResponse } from './dto/login-user.dto';
 import { loginMessage } from 'src/user/dto/login-user.dto';
 
 @Injectable()
@@ -82,12 +82,15 @@ export class AuthService {
     try {
       console.log(phone, password);
       const user = await this.userService.findOne(phone);
+      const result = new LoginUserResponse();
       console.log(user);
       if (user && user.password === password) {
         let token = await this.signToken({
           phone,
           password,
         });
+        result.token = token;
+        result.userInfo = user;
         return token;
       } else if (user && user.password !== password) {
         return '密码错误';
