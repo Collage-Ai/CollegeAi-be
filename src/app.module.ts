@@ -12,6 +12,7 @@ import { GlobalInterceptor } from './interceptor/global.interceptor';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { WinstonLoggerService } from './interceptor/wiston-logger.service';
 import { AuthService } from './auth/auth.service';
+import { Chat } from './chat/entities/chat.entity';
 
 @Module({
   imports: [
@@ -28,7 +29,7 @@ import { AuthService } from './auth/auth.service';
       username: process.env.DB_USERNAME || 'root',
       password: process.env.DB_PASSWORD || 'root',
       database: process.env.DB_NAME || 'hwtest',
-      entities: [User],
+      entities: [User,Chat],
       charset: 'utf8mb4',
     }),
     ChatModule,

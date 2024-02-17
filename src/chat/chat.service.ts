@@ -26,13 +26,18 @@ export class ChatService {
   }
 
   async storeMessage(userId: string, message: string, sender: string): Promise<Chat> {
-    const chat = this.chatRepository.create({
-      userId,
-      message,
-      sender,
-    });
-
-    return this.chatRepository.save(chat);
+    const chat = new Chat();
+    chat.userId = userId;
+    chat.message = message;
+    chat.sender = sender;
+    chat.time = new Date();
+    console.log(chat);
+    try {
+      return await this.chatRepository.save(chat);
+    }catch(e){
+      console.log(e);
+    }
+    
   }
   
 }
