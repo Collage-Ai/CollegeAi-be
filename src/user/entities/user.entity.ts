@@ -6,11 +6,35 @@ export class User {
   id: number;
 
   @Column()
-  name: string;
+  username: string;
 
   @Column()
   password: string;
 
   @Column()
   phone: string;
+
+  @Column()
+  avatar?: string;
+
+  @Column()
+  email: string;
+
+  @Column()
+  education: string;
+
+  @Column()
+  major: string;
+
+  @Column()
+  career: string;
+
+  @Column()
+  collegeStage: string;
+
+  @Column()
+  careerExplore: string;
+
+  @Column()
+  advantage: string;
 }

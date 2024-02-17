@@ -17,7 +17,7 @@ import { AuthService } from './auth/auth.service';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: '.env.${process.env.NODE_ENV}',
+      envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
     UserModule,
     //AuthModule, // 包含 AuthService

@@ -8,7 +8,7 @@ import {
   Delete,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, registerInfo } from './dto/create-user.dto';
 import { Public } from 'src/app.decorator';
 
 @Controller('user')
@@ -17,7 +17,9 @@ export class UserController {
 
   @Public()
   @Post('register')
-  create(@Body() createUserDto: CreateUserDto) {
+  create(@Body() registerMsg:registerInfo) {
+    //todo:验证短信验证码
+    const createUserDto = new CreateUserDto();
     return this.userService.create(createUserDto);
   }
 
@@ -26,9 +28,11 @@ export class UserController {
     return this.userService.findAll();
   }
 
-  @Get(':name')
-  findOne(@Param('name') name: string) {
-    return this.userService.findOne(name);
+  //获取短信验证码
+  @Public()
+  @Post('sendCode')
+  sendCode(@Body() body) {
+    return this.userService.sendCode(body);
   }
 
   // @Patch(':id')

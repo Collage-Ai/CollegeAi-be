@@ -14,18 +14,29 @@ export class UserService {
   ) {}
   async create(createUserDto: CreateUserDto): Promise<createUserMessage> {
     try {
-      //创建用户
-      const user = new User();
       //注意查询要使用异步方法
-      const userExist = await this.findOne(createUserDto.name);
+      const userExist = await this.findOne(createUserDto.phone);
       const result = new createUserMessage();
       if (userExist) {
         result.code = 1;
         result.msg = '用户名已存在';
         return result;
       } else {
-        user.name = createUserDto.name;
-        user.password = createUserDto.password;
+        //创建用户
+      const user = new User();
+      user.id = createUserDto.id;
+      user.avatar = createUserDto.avatar;
+      user.phone = createUserDto.phone;
+      user.username = createUserDto.username;
+      user.education = createUserDto.education;
+      user.major = createUserDto.major;
+      user.career = createUserDto.career;
+      user.collegeStage = createUserDto.collegeStage;
+      user.careerExplore = createUserDto.careerExplore;
+      user.advantage = createUserDto.advantage;
+      user.email = createUserDto.email;
+      user.password = createUserDto.password;
+        //保存用户
         this.userRepository.save(user);
         result.code = 0;
         result.msg = '注册成功';
@@ -41,15 +52,13 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  async findOne(name: string): Promise<User | undefined> {
+  async findOne(phone: string): Promise<User | undefined> {
     //根据用户名查询用户
-    return this.userRepository.findOne({ where: { name: name } });
+    return this.userRepository.findOne({ where: { phone:phone } });
   }
-  // update(id: number, updateUserDto: UpdateUserDto) {
-  //   return `This action updates a #${id} user`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} user`;
-  // }
+  
+  //获取短信验证码
+  sendCode(body) {
+    console.log(body);
+  }
 }

@@ -12,12 +12,12 @@ export class AuthService {
   ) {}
   /**
    * @description: 验证用户
-   * @param {string} name
+   * @param {string} phone
    * @param {string} password
    * @return {Boolean} true or false
    * */
-  async validateUser(name: string, password: string): Promise<any> {
-    const user = await UserService.prototype.findOne(name);
+  async validateUser(phone: string, password: string): Promise<any> {
+    const user = await UserService.prototype.findOne(phone);
     if (user && user.password === password) {
       // const { password, ...result } = user;
       // return result;
@@ -45,12 +45,12 @@ export class AuthService {
    *  @returns {string} token
    * **/
   async signToken(User: LoginUserDto, isTesting?: boolean) {
-    const user = await this.userService.findOne(User.name);
+    const user = await this.userService.findOne(User.phone);
     if (!user) {
       throw new BadRequestException('用户不存在');
     }
     return this.jwtService.sign({
-      name: user.name,
+      phone: user.phone,
       sub: user.id,
     });
   }
@@ -62,9 +62,9 @@ export class AuthService {
    * */
   async refreshToken(token: string): Promise<string> {
     try {
-      const { name, sub } = this.jwtService.verify(token);
+      const { phone, sub } = this.jwtService.verify(token);
       return this.jwtService.sign({
-        name,
+        phone,
         sub,
       });
     } catch (error) {
@@ -74,31 +74,25 @@ export class AuthService {
 
   /**
    * @description: 登录
-   * @param {string} name
+   * @param {string} phone
    * @param {string} password
    * @return {*}
    * */
-  async login(name: string, password: string): Promise<loginMessage> {
+  async login(phone: string, password: string): Promise<string> {
     try {
-      console.log(name, password);
-      const user = await this.userService.findOne(name);
+      console.log(phone, password);
+      const user = await this.userService.findOne(phone);
       console.log(user);
-      const result = new loginMessage();
       if (user && user.password === password) {
-        result.token = await this.signToken({
-          name,
+        let token = await this.signToken({
+          phone,
           password,
         });
-        result.code = 0;
-        return result;
+        return token;
       } else if (user && user.password !== password) {
-        result.code = 1;
-        result.msg = '密码错误';
-        return result;
+        return '密码错误';
       } else {
-        result.code = 1;
-        result.msg = '用户不存在';
-        return result;
+        return '用户不存在';
       }
     } catch (error) {
       return error;

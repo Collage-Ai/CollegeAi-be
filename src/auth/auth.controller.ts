@@ -10,8 +10,8 @@ export class AuthController {
 
   @Public()
   @Post('login')
-  async login(@Body() loginUserDto: CreateUserDto) {
-    const { name, password } = loginUserDto;
-    return this.AuthService.login(name, password);
+  async login(@Body() loginUserDto: LoginUserDto) {
+    const { phone, password } = loginUserDto;
+    return this.AuthService.login(phone, password);
   }
 }
