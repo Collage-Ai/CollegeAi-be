@@ -78,7 +78,7 @@ export class AuthService {
    * @param {string} password
    * @return {*}
    * */
-  async login(phone: string, password: string): Promise<string> {
+  async login(phone: string, password: string): Promise<LoginUserResponse|string> {
     try {
       console.log(phone, password);
       const user = await this.userService.findOne(phone);
@@ -91,7 +91,7 @@ export class AuthService {
         });
         result.token = token;
         result.userInfo = user;
-        return token;
+        return result;
       } else if (user && user.password !== password) {
         return '密码错误';
       } else {
