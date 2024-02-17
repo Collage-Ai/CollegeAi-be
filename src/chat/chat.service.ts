@@ -3,6 +3,7 @@ import { AIService } from '../ai/ai.service';
 import { Repository } from 'typeorm';
 import { Chat } from './entities/chat.entity';
 import { InjectRepository } from '@nestjs/typeorm';
+import { throwError } from 'rxjs';
 
 @Injectable()
 export class ChatService {
@@ -36,6 +37,8 @@ export class ChatService {
       return await this.chatRepository.save(chat);
     }catch(e){
       console.log(e);
+      //抛出异常
+      throw new Error(e);
     }
     
   }
