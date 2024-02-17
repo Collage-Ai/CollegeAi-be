@@ -17,6 +17,7 @@ import { AuthService } from './auth/auth.service';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env.${process.env.NODE_ENV}',
     }),
     UserModule,
     //AuthModule, // 包含 AuthService
@@ -38,7 +39,7 @@ import { AuthService } from './auth/auth.service';
     AppService,
     {
       provide: APP_INTERCEPTOR,
-      useFactory: ( winston: WinstonLoggerService) => {
+      useFactory: (winston: WinstonLoggerService) => {
         return new GlobalInterceptor(winston);
       },
       inject: [WinstonLoggerService], // 这里列出GlobalInterceptor依赖的服务

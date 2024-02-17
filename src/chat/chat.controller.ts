@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { Public } from 'src/app.decorator';
 import { ChatService } from './chat.service';
+import { CreateChatDto } from './dto/create-chat.dto';
 
 @Controller('chat')
 export class UserController {
@@ -16,7 +17,7 @@ export class UserController {
 
   @Public()
   @Post('storeMessage')
-  create(@Body() chatDto: any) {
+  create(@Body() chatDto: CreateChatDto) {
     return this.chatService.storeMessage(chatDto.userId, chatDto.message, chatDto.sender);
   }
 
