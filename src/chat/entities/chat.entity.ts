@@ -3,7 +3,7 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 @Entity({ name: 'chat' })
 export class Chat {
   @PrimaryGeneratedColumn()
-  id?: number;
+  id: number;
 
   @Column()
   userId: number; // 用于标识用户的ID

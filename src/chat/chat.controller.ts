@@ -16,11 +16,11 @@ import { UpdateChatDto } from './dto/update-chat.dto';
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
-  @Post('storeMessage')
-  create(@Body() chatDto: CreateChatDto) {
-    console.log(chatDto);
-    return this.chatService.storeMessage(chatDto);
-  }
+  // @Post('storeMessage')
+  // create(@Body() chatDto: CreateChatDto) {
+  //   console.log(chatDto);
+  //   return this.chatService.storeMessage(chatDto);
+  // }
 
   @Get('getMessages')
   getMessages(@Body() userId: number) {
