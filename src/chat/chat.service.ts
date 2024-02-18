@@ -22,23 +22,47 @@ export class ChatService {
   }
 
   async getMessagesForUser(userId: number): Promise<Chat[]> {
-    return this.chatRepository.find({
-      where: { userId },
-      order: { time: 'ASC' }, // 根据时间升序排序
-    });
+    try {
+      return await this.chatRepository.find({
+        where: { userId },
+        order: { time: 'ASC' }, // 根据时间升序排序
+      });
+    } catch (e) {
+      console.log(e);
+      throw new Error(e);
+    }
   }
 
   async updateMessage(chat: UpdateChatDto): Promise<Chat> {
     try {
+      // 设置当前时间
       chat.time = new Date();
-      //查找是否有id和userId相同的记录,如果有则更新,没有则插入
-      const oldChat = await this.chatRepository.findOne({where:{id: chat.id,userId: chat.userId}});
-      if (!oldChat) {
-        return await this.chatRepository.save(chat);
-      }else{
-        await this.chatRepository.update(chat.id,chat);
-        return this.chatRepository.findOne({where:{id: chat.id}});
+
+      let oldChat;
+
+      // 如果id存在，则首先尝试使用id来查找记录
+      if (chat.id) {
+        oldChat = await this.chatRepository.findOne({ where: { id: chat.id } });
       }
+
+      // 如果没有找到记录，并且有aiMsg，则尝试使用aiMsg和userId来查找记录
+      if (!oldChat && chat.aiMsg) {
+        oldChat = await this.chatRepository.findOne({
+          where: { aiMsg: chat.aiMsg, userId: chat.userId },
+        });
+      }
+
+      // 如果找到了记录，则更新
+      if (oldChat) {
+        await this.chatRepository.update({ id: oldChat.id }, { ...chat });
+      } else {
+        // 如果没有找到记录，则插入新记录
+        await this.chatRepository.save(chat);
+      }
+
+      // 返回更新后的记录，如果是新插入的记录，则直接返回
+
+      return await this.chatRepository.findOne({ where: { id: oldChat.id } });
     } catch (e) {
       console.log(e);
       throw new Error(e);

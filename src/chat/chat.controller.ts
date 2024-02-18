@@ -22,7 +22,7 @@ export class ChatController {
   //   return this.chatService.storeMessage(chatDto);
   // }
 
-  @Get('getMessages')
+  @Post('getMessages')
   getMessages(@Body() userId: number) {
     return this.chatService.getMessagesForUser(userId);
   }
