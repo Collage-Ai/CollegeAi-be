@@ -4,6 +4,8 @@ import { Repository } from 'typeorm';
 import { Chat } from './entities/chat.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { throwError } from 'rxjs';
+import { CreateChatDto } from './dto/create-chat.dto';
+import { UpdateChatDto } from './dto/update-chat.dto';
 
 @Injectable()
 export class ChatService {
@@ -19,18 +21,28 @@ export class ChatService {
     return response;
   }
 
-  async getMessagesForUser(userId: string): Promise<Chat[]> {
+  async getMessagesForUser(userId: number): Promise<Chat[]> {
     return this.chatRepository.find({
       where: { userId },
       order: { time: 'ASC' }, // 根据时间升序排序
     });
   }
 
-  async storeMessage(userId: string, message: string, sender: string): Promise<Chat> {
+  async updateMessage(chat: UpdateChatDto): Promise<Chat> {
+    try {
+      return await this.chatRepository.save(chat);
+    }
+    catch(e){
+      console.log(e);
+      throw new Error(e);
+    }
+  }
+
+  async storeMessage({userId,userMsg,aiMsg}:CreateChatDto): Promise<Chat> {
     const chat = new Chat();
     chat.userId = userId;
-    chat.message = message;
-    chat.sender = sender;
+    chat.aiMsg = aiMsg;
+    chat.userMsg = userMsg;
     chat.time = new Date();
     console.log(chat);
     try {

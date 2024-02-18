@@ -3,4 +3,6 @@ import { CreateChatDto } from './create-chat.dto';
 
 export class UpdateChatDto extends PartialType(CreateChatDto) {
   id: number;
+  time: string;
+  category?: number;
 }

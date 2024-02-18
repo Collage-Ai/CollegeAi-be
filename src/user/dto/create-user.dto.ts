@@ -1,6 +1,6 @@
 import { CreateChatDto } from '../../chat/dto/create-chat.dto';
 export class CreateUserDto {
-  id: number;
+  id?: number;
   avatar?: string;
   phone: string;
   username: string;

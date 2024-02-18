@@ -6,14 +6,17 @@ export class Chat {
   id?: number;
 
   @Column()
-  userId: string; // 用于标识用户的ID
+  userId: number; // 用于标识用户的ID
 
   @Column()
-  sender: string; // 'user' 或 'ai' 来区分消息的发送者
+  aiMsg: string; // AI回复的消息
 
   @Column()
-  message: string; // 消息内容
+  userMsg: string; // 用户发送的消息
 
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   time: Date; // 消息发送时间
+
+  @Column()
+  category: number; // 消息的类别
 }
