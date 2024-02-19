@@ -14,6 +14,7 @@ import { WinstonLoggerService } from './interceptor/wiston-logger.service';
 import { AuthService } from './auth/auth.service';
 import { Chat } from './chat/entities/chat.entity';
 import { SkillModule } from './skill/skill.module';
+import { Skill } from './skill/entities/skill.entity';
 
 @Module({
   imports: [
@@ -30,7 +31,7 @@ import { SkillModule } from './skill/skill.module';
       username: process.env.DB_USERNAME || 'root',
       password: process.env.DB_PASSWORD || 'root',
       database: process.env.DB_NAME || 'hwtest',
-      entities: [User,Chat],
+      entities: [User,Chat,Skill],
       charset: 'utf8mb4',
     }),
     ChatModule,
