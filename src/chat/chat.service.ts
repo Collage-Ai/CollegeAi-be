@@ -41,7 +41,7 @@ export class ChatService {
       let oldChat;
 
       // 如果id存在，则首先尝试使用id来查找记录
-      if (chat.id) {
+      if (chat?.id) {
         oldChat = await this.chatRepository.findOne({ where: { id: chat.id } });
       }
 
