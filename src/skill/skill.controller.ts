@@ -22,10 +22,10 @@ export class SkillController {
     return this.skillService.findOne(+id);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateSkillDto: UpdateSkillDto) {
-  //   return this.skillService.update(+id, updateSkillDto);
-  // }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateSkillDto: UpdateSkillDto) {
+    return this.skillService.update(+id, updateSkillDto);
+  }
 
   // @Delete(':id')
   // remove(@Param('id') id: string) {

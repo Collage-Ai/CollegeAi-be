@@ -18,5 +18,5 @@ export class Skill {
   type: string; // 技能类型
 
   @Column()
-  category: number; // 技能归类
+  category: number; // 技能归类 0(未分类) 1(归档)
 }

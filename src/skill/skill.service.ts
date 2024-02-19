@@ -33,7 +33,11 @@ export class SkillService {
   }
 
   update(id: number, updateSkillDto: UpdateSkillDto) {
-    return `This action updates a #${id} skill`;
+    try {
+      return this.skillRepository.update({id},updateSkillDto);
+    }catch(e){
+      throw new Error(e);
+    }
   }
 
   remove(id: number) {
