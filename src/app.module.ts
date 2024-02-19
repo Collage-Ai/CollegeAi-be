@@ -13,6 +13,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core';
 import { WinstonLoggerService } from './interceptor/wiston-logger.service';
 import { AuthService } from './auth/auth.service';
 import { Chat } from './chat/entities/chat.entity';
+import { SkillModule } from './skill/skill.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { Chat } from './chat/entities/chat.entity';
     }),
     ChatModule,
     AIModule,
+    SkillModule,
   ],
   controllers: [AppController],
   providers: [
