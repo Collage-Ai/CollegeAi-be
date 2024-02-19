@@ -13,4 +13,7 @@ export class Category {
 
   @Column()
   categoryText: string; // 类型
+
+  @Column()
+  bigCategory: string; // 大类别
 }
