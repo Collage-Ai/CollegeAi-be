@@ -19,4 +19,7 @@ export class Chat {
 
   @Column()
   category: number; // 消息的类别
+
+  @Column()
+  type: string; // 消息的类型:insight or skill
 }
