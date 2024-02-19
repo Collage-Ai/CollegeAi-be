@@ -15,6 +15,7 @@ import { AuthService } from './auth/auth.service';
 import { Chat } from './chat/entities/chat.entity';
 import { SkillModule } from './skill/skill.module';
 import { Skill } from './skill/entities/skill.entity';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { Skill } from './skill/entities/skill.entity';
     ChatModule,
     AIModule,
     SkillModule,
+    CategoryModule,
   ],
   controllers: [AppController],
   providers: [
