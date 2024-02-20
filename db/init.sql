@@ -13,7 +13,7 @@ CREATE TABLE `chat` (
   `aiMsg` TEXT NOT NULL,
   `userMsg` TEXT NOT NULL,
   `time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-  `category` INT NOT NULL,
+  `category` INT,
   `type` VARCHAR(255) NOT NULL
 );
 CREATE TABLE `skill` (

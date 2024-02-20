@@ -18,7 +18,7 @@ export class Chat {
   time: Date; // 消息发送时间
 
   @Column()
-  category: number; // 消息的类别
+  category?: number; // 消息的类别
 
   @Column()
   type: string; // 消息的类型:insight or skill
