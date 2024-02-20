@@ -5,7 +5,7 @@ CREATE TABLE `category` (
   `userId` INT NOT NULL,
   `type` VARCHAR(255) NOT NULL,
   `categoryText` VARCHAR(255) NOT NULL,
-  `bigCategory` VARCHAR(255) NOT NULL
+  `bigCategory` VARCHAR(255)
 );
 CREATE TABLE `chat` (
   `id` INT AUTO_INCREMENT PRIMARY KEY,

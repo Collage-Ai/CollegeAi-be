@@ -16,6 +16,7 @@ import { Chat } from './chat/entities/chat.entity';
 import { SkillModule } from './skill/skill.module';
 import { Skill } from './skill/entities/skill.entity';
 import { CategoryModule } from './category/category.module';
+import { Category } from './category/entities/category.entity';
 
 @Module({
   imports: [
@@ -32,7 +33,7 @@ import { CategoryModule } from './category/category.module';
       username: process.env.DB_USERNAME || 'root',
       password: process.env.DB_PASSWORD || 'root',
       database: process.env.DB_NAME || 'hwtest',
-      entities: [User,Chat,Skill],
+      entities: [User,Chat,Skill,Category],
       charset: 'utf8mb4',
       logging: true,
       logger: 'advanced-console',

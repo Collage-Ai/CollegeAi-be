@@ -15,5 +15,5 @@ export class Category {
   categoryText: string; // 类型
 
   @Column()
-  bigCategory: string; // 大类别
+  bigCategory?: string; // 大类别
 }
