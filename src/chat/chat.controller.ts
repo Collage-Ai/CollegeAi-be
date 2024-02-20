@@ -16,18 +16,18 @@ import { UpdateChatDto } from './dto/update-chat.dto';
 export class ChatController {
   constructor(private readonly chatService: ChatService) {}
 
-  // @Post('storeMessage')
-  // create(@Body() chatDto: CreateChatDto) {
-  //   console.log(chatDto);
-  //   return this.chatService.storeMessage(chatDto);
-  // }
+  @Post()
+  create(@Body() chatDto: CreateChatDto) {
+    console.log(chatDto);
+    return this.chatService.storeMessage(chatDto);
+  }
 
-  @Post('getMessages')
+  @Get(':userId')
   getMessages(@Body() userId: number) {
     return this.chatService.getMessagesForUser(userId);
   }
 
-  @Post('updateMessage')
+  @Patch()
   update(@Body() chatDto: UpdateChatDto) {
     return this.chatService.updateMessage(chatDto);
   }

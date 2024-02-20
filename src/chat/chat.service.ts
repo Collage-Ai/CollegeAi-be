@@ -35,53 +35,27 @@ export class ChatService {
 
   async updateMessage(chat: UpdateChatDto): Promise<Chat> {
     try {
-      // 设置当前时间
-      chat.time = new Date();
-
-      let oldChat;
-
-      // 如果id存在，则首先尝试使用id来查找记录
-      if (chat?.id) {
-        oldChat = await this.chatRepository.findOne({ where: { id: chat.id } });
+      const chatToUpdate = await this.chatRepository.findOneBy({ id: chat.id} );
+      if (!chatToUpdate) {
+        throw new Error('消息不存在');
       }
-
-      // 如果没有找到记录，并且有aiMsg，则尝试使用aiMsg和userId来查找记录
-      if (!oldChat && chat.aiMsg) {
-        oldChat = await this.chatRepository.findOne({
-          where: { aiMsg: chat.aiMsg, userId: chat.userId },
-        });
-      }
-
-      // 如果找到了记录，则更新
-      if (oldChat) {
-        await this.chatRepository.update({ id: oldChat.id }, { ...chat });
-      } else {
-        // 如果没有找到记录，则插入新记录
-        await this.chatRepository.save(chat);
-      }
-
-      // 返回更新后的记录，如果是新插入的记录，则直接返回
-
-      return await this.chatRepository.findOne({ where: { id: oldChat.id } });
-    } catch (e) {
+      chatToUpdate.category = chat.category;
+      chatToUpdate.time = new Date();
+      return await this.chatRepository.save(chatToUpdate);
+    }
+    catch (e) {
       console.log(e);
       throw new Error(e);
     }
   }
 
-  async storeMessage({ userId, userMsg, aiMsg }: CreateChatDto): Promise<Chat> {
-    const chat = new Chat();
-    chat.userId = userId;
-    chat.aiMsg = aiMsg;
-    chat.userMsg = userMsg;
-    chat.time = new Date();
-    console.log(chat);
+  async storeMessage(createChatDto: CreateChatDto): Promise<Chat> {
     try {
+      const chat = this.chatRepository.create(createChatDto);
       return await this.chatRepository.save(chat);
-    } catch (e) {
+    }catch (e) {
       console.log(e);
-      //抛出异常
       throw new Error(e);
     }
-  }
+  }  
 }
