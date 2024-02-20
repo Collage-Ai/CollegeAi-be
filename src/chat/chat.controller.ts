@@ -23,8 +23,8 @@ export class ChatController {
   }
 
   @Get(':userId')
-  getMessages(@Body() userId: number) {
-    return this.chatService.getMessagesForUser(userId);
+  getMessages(@Param('userId') userId: string) {
+    return this.chatService.getMessagesForUser(+userId);
   }
 
   @Patch()

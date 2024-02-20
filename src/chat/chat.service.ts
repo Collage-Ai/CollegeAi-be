@@ -23,6 +23,7 @@ export class ChatService {
 
   async getMessagesForUser(userId: number): Promise<Chat[]> {
     try {
+      console.log('userId', userId);
       return await this.chatRepository.find({
         where: { userId },
         order: { time: 'ASC' }, // 根据时间升序排序
