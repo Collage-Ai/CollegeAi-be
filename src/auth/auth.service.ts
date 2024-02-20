@@ -80,25 +80,23 @@ export class AuthService {
    * */
   async login(phone: string, password: string): Promise<LoginUserResponse|string> {
     try {
-      console.log(phone, password);
       const user = await this.userService.findOne(phone);
-      const result = new LoginUserResponse();
-      console.log(user);
-      if (user && user.password === password) {
-        let token = await this.signToken({
-          phone,
-          password,
-        });
-        result.token = token;
-        result.userInfo = user;
-        return result;
-      } else if (user && user.password !== password) {
-        return '密码错误';
-      } else {
-        return '用户不存在';
+
+      if (!user) {
+        throw new BadRequestException('用户不存在');
       }
+
+      const isPasswordValid = await this.validateUser(phone, password);
+
+      if (!isPasswordValid) {
+        throw new BadRequestException('密码错误');
+      }
+
+      const token = await this.signToken({ phone, password });
+      return { token, userInfo: user };
     } catch (error) {
-      return error;
+      // 这里可以根据error的类型决定是否需要重新抛出异常，或者直接返回错误信息
+      throw new BadRequestException(error.response || '登录过程中出现未知错误');
     }
   }
 }

@@ -18,9 +18,7 @@ export class UserService {
       const userExist = await this.findOne(createUserDto.phone);
       const result = new createUserMessage();
       if (userExist) {
-        result.code = 1;
-        result.msg = '用户名已存在';
-        return result;
+       throw new Error('用户已存在');
       } else {
         //创建用户
       const user = new User();
