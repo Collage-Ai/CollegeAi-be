@@ -34,6 +34,8 @@ import { CategoryModule } from './category/category.module';
       database: process.env.DB_NAME || 'hwtest',
       entities: [User,Chat,Skill],
       charset: 'utf8mb4',
+      logging: true,
+      logger: 'advanced-console',
     }),
     ChatModule,
     AIModule,

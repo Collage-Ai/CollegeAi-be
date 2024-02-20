@@ -1,47 +1,45 @@
-import { Inject, Injectable } from '@nestjs/common';
-import { CreateUserDto, createUserMessage } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
+import {
+  BadRequestException,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common';
+import { CreateUserDto, registerInfo } from './dto/create-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AuthService } from '../auth/auth.service';
-import { loginMessage } from './dto/login-user.dto';
+import { CategoryService } from 'src/category/category.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    private readonly categoryService: CategoryService,
   ) {}
-  async create(createUserDto: CreateUserDto): Promise<createUserMessage> {
+  // 假设CreateUserDto和createUserMessage已经有了明确的类型定义
+
+  async create(createUserDto: CreateUserDto): Promise<string> {
     try {
-      //注意查询要使用异步方法
+      console.log(createUserDto);
       const userExist = await this.findOne(createUserDto.phone);
-      const result = new createUserMessage();
       if (userExist) {
-       throw new Error('用户已存在');
-      } else {
-        //创建用户
-      const user = new User();
-      user.id = createUserDto.id;
-      user.avatar = createUserDto.avatar;
-      user.phone = createUserDto.phone;
-      user.username = createUserDto.username;
-      user.education = createUserDto.education;
-      user.major = createUserDto.major;
-      user.career = createUserDto.career;
-      user.collegeStage = createUserDto.collegeStage;
-      user.careerExplore = createUserDto.careerExplore;
-      user.advantage = createUserDto.advantage;
-      user.email = createUserDto.email;
-      user.password = createUserDto.password;
-        //保存用户
-        this.userRepository.save(user);
-        result.code = 0;
-        result.msg = '注册成功';
-        return result;
+        throw new BadRequestException('用户已存在'); // 使用具体的异常类型
       }
+
+      // 使用对象传递简化代码
+      const user = this.userRepository.create(createUserDto);
+
+      await this.userRepository.save(user); // 确保等待异步操作完成
+      await this.categoryService.addInitChatCategories(user.id);
+
+      return '注册成功'; // 直接返回对象，简化代码
     } catch (e) {
-      console.log(e);
+      // 根据错误类型进行不同的处理
+      if (e instanceof BadRequestException) {
+        throw e; // 直接抛出已知异常
+      } else {
+        console.error('用户创建失败', e); // 记录更具体的错误日志
+        throw new InternalServerErrorException('内部服务器错误'); // 抛出内部服务器错误
+      }
     }
   }
 
@@ -51,12 +49,26 @@ export class UserService {
   }
 
   async findOne(phone: string): Promise<User | undefined> {
-    //根据用户名查询用户
-    return this.userRepository.findOne({ where: { phone:phone } });
+    console.log(phone);
+    try {
+      return this.userRepository.findOne({ where: { phone: phone } });
+    } catch (e) {
+      console.error('查询失败', e);
+      throw new InternalServerErrorException('内部服务器错误');
+    }
   }
-  
+
   //获取短信验证码
   sendCode(body) {
     console.log(body);
+  }
+
+  //验证短信验证码
+  async verifyCode(registerMsg: registerInfo): Promise<CreateUserDto> {
+    //将registerMsg.SMSCode和数据库中的验证码进行比对
+    //如果一致，将registerInfo类型转化为CreateUserDto类型
+    let createUserDto = new CreateUserDto();
+    createUserDto = registerMsg;
+    return createUserDto;
   }
 }

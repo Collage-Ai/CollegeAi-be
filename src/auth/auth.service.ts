@@ -86,15 +86,15 @@ export class AuthService {
         throw new BadRequestException('用户不存在');
       }
 
-      const isPasswordValid = await this.validateUser(phone, password);
-
-      if (!isPasswordValid) {
+      //const isPasswordValid = await this.validateUser(phone, password);
+      if (!user || user.password !== password) {
         throw new BadRequestException('密码错误');
       }
 
       const token = await this.signToken({ phone, password });
       return { token, userInfo: user };
     } catch (error) {
+      console.log(error);
       // 这里可以根据error的类型决定是否需要重新抛出异常，或者直接返回错误信息
       throw new BadRequestException(error.response || '登录过程中出现未知错误');
     }

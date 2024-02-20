@@ -17,9 +17,9 @@ export class UserController {
 
   @Public()
   @Post('register')
-  create(@Body() registerMsg:registerInfo) {
+ async create(@Body() registerMsg:registerInfo) {
     //todo:验证短信验证码
-    const createUserDto = new CreateUserDto();
+    const createUserDto = await this.userService.verifyCode(registerMsg);
     return this.userService.create(createUserDto);
   }
 
