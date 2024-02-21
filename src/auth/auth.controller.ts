@@ -15,10 +15,9 @@ export class AuthController {
     const { phone, password } = loginUserDto;
     return this.AuthService.login(phone, password);
   }
-
   @Get('info')
   async getInfo(@Req() req) {
-    const token = req.headers.authorization;
-    return this.AuthService.getInfo(token);
+    const phone = req.user.phone;//学到了，jwt验证后的用户信息可以通过req.user获取
+    return this.AuthService.getInfo(phone);
   }
 }

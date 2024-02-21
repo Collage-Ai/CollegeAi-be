@@ -107,9 +107,8 @@ export class AuthService {
  * @param {string} token
  * @return {UpdateUserDto} 用户信息
  */
-async getInfo(token: string): Promise<UpdateUserDto> {
+async getInfo(phone: string): Promise<UpdateUserDto> {
   try {
-    const { phone, sub } = this.jwtService.verify(token);
     const user = await this.userService.findOne(phone);
     return user;
   } catch (error) {
