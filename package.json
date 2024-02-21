@@ -36,6 +36,7 @@
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1",
+    "search-engine-tool": "^1.0.4",
     "socket.io": "^4.7.4",
     "typeorm": "^0.3.17",
     "winston": "^3.11.0",

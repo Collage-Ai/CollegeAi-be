@@ -8,6 +8,8 @@ import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryService } from 'src/category/category.service';
+import { UpdateUserDto } from './dto/update-user.dto';
+const searchEngineTool = require('search-engine-tool'); // 确保这个库是安装并可以在你的环境中运行的
 
 @Injectable()
 export class UserService {
@@ -71,4 +73,39 @@ export class UserService {
     createUserDto = registerMsg;
     return createUserDto;
   }
+
+  //更新用户信息
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    try {
+      const userToUpdate = await this.userRepository.findOne({ where: { id: id } });
+      if (!userToUpdate) {
+        throw new BadRequestException('用户不存在');
+      }
+  
+      // 手动赋值属性以确保正确复制所有需要更新的字段
+      Object.assign(userToUpdate, updateUserDto);
+  
+      // 保存更新后的用户信息
+      return await this.userRepository.save(userToUpdate);
+    } catch (e) {
+      console.error('用户更新失败', e);
+      // 在抛出新的异常时保留原始错误信息
+      throw new InternalServerErrorException('内部服务器错误', e.message);
+    }
+  }
+  /**
+ * @description: 搜索
+ * @param {string} {query,engine}
+ * @return {string}
+ */
+  async search(body:any): Promise<any> {
+    const {query, engine} = body;
+    try {
+      const results = await searchEngineTool(query, engine);
+      return results;
+    } catch (error) {
+      throw new Error('搜索失败: ' + error.message);
+    }
+  }
 }
+

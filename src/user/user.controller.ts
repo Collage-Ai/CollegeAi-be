@@ -10,6 +10,7 @@ import {
 import { UserService } from './user.service';
 import { CreateUserDto, registerInfo } from './dto/create-user.dto';
 import { Public } from 'src/app.decorator';
+import { UpdateUserDto } from './dto/update-user.dto';
 
 @Controller('user')
 export class UserController {
@@ -23,11 +24,6 @@ export class UserController {
     return this.userService.create(createUserDto);
   }
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
-
   //获取短信验证码
   @Public()
   @Post('sendCode')
@@ -35,13 +31,14 @@ export class UserController {
     return this.userService.sendCode(body);
   }
 
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-  //   return this.userService.update(+id, updateUserDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.userService.remove(+id);
-  // }
+  @Patch(':id')
+  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    return this.userService.update(+id, updateUserDto);
+  }
+  @Public()
+  @Post('search')
+  search(@Body() body) {
+    console.log(body)
+    return this.userService.search(body);
+  }
 }
