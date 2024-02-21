@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LoginUserDto } from './dto/login-user.dto';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
@@ -14,5 +14,11 @@ export class AuthController {
     console.log('login', loginUserDto);
     const { phone, password } = loginUserDto;
     return this.AuthService.login(phone, password);
+  }
+
+  @Get('info')
+  async getInfo(@Req() req) {
+    const token = req.headers.authorization;
+    return this.AuthService.getInfo(token);
   }
 }

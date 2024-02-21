@@ -3,6 +3,7 @@ import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import { LoginUserDto, LoginUserResponse } from './dto/login-user.dto';
 import { loginMessage } from 'src/user/dto/login-user.dto';
+import { UpdateUserDto } from 'src/user/dto/update-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -99,4 +100,20 @@ export class AuthService {
       throw new BadRequestException(error.response || '登录过程中出现未知错误');
     }
   }
+  
+/**
+ * getInfo
+ * @description: 根据token获取用户信息
+ * @param {string} token
+ * @return {UpdateUserDto} 用户信息
+ */
+async getInfo(token: string): Promise<UpdateUserDto> {
+  try {
+    const { phone, sub } = this.jwtService.verify(token);
+    const user = await this.userService.findOne(phone);
+    return user;
+  } catch (error) {
+    throw new BadRequestException('获取用户信息失败');
+  }
+}
 }
