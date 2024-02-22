@@ -63,12 +63,12 @@ export class UserService {
   }
 
   //获取短信验证码
-  sendCode(phone:string) :string{
+ async sendCode(phone:string): Promise<string> {
     //生成随机6位数验证码
     let code = this.createCode();
     //调用短信服务发送短信
     try {
-      this.smsService.sendSms(phone, code);
+      await this.smsService.sendSms(phone, code);
       //将验证码存入smsCode对象中
       this.smsCode[phone] = code;
       return '短信发送成功';

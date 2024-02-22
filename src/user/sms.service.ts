@@ -20,8 +20,9 @@ export class SmsService {
   }
 
   async sendSms(phoneNumbers: string, templateParam: string): Promise<void> {
+    console.log('发送短信', phoneNumbers, templateParam);
     const sendSmsRequest = new $Dysmsapi20170525.SendSmsRequest({
-      phoneNumbers,
+      phoneNumbers: phoneNumbers,
       signName: '天津至善教育科技',
       templateCode: 'SMS_295215377',
       templateParam: `{"code":"${templateParam}"}`,

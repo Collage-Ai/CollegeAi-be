@@ -27,7 +27,7 @@ export class UserController {
   //获取短信验证码
   @Public()
   @Post('sendCode')
-  sendCode(@Body() phone:string) {
+  sendCode(@Body(){phone}:{phone:string}) {
     return this.userService.sendCode(phone);
   }
 
