@@ -9,6 +9,7 @@ import { User } from './entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryService } from 'src/category/category.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { SmsService } from './sms.service';
 const searchEngineTool = require('search-engine-tool'); // 确保这个库是安装并可以在你的环境中运行的
 
 @Injectable()
@@ -16,8 +17,9 @@ export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
     private readonly categoryService: CategoryService,
+    private readonly smsService: SmsService,
   ) {}
-  // 假设CreateUserDto和createUserMessage已经有了明确的类型定义
+  private smsCode:Record<string, string> = {};
 
   async create(createUserDto: CreateUserDto): Promise<string> {
     try {
@@ -61,13 +63,26 @@ export class UserService {
   }
 
   //获取短信验证码
-  sendCode(body) {
-    console.log(body);
+  sendCode(phone:string) :string{
+    //生成随机6位数验证码
+    let code = this.createCode();
+    //调用短信服务发送短信
+    try {
+      this.smsService.sendSms(phone, code);
+      //将验证码存入smsCode对象中
+      this.smsCode[phone] = code;
+      return '短信发送成功';
+    } catch (error) {
+      throw new Error('短信发送失败: ' + error.message);
+    }
   }
 
   //验证短信验证码
   async verifyCode(registerMsg: registerInfo): Promise<CreateUserDto> {
     //将registerMsg.SMSCode和数据库中的验证码进行比对
+    if (registerMsg.SMSCode !== this.smsCode[registerMsg.phone]) {
+      throw new BadRequestException('验证码错误');
+    }
     //如果一致，将registerInfo类型转化为CreateUserDto类型
     let createUserDto = new CreateUserDto();
     createUserDto = registerMsg;
@@ -106,6 +121,11 @@ export class UserService {
     } catch (error) {
       throw new Error('搜索失败: ' + error.message);
     }
+  }
+
+ //生成随机6位数验证码
+  createCode() {
+    return Math.random().toString().slice(-6);
   }
 }
 
