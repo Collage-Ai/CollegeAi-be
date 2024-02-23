@@ -16,7 +16,7 @@ RUN pnpm install --prod
 COPY dist ./dist
 
 # 暴露端口
-EXPOSE 8000
+EXPOSE 3000
 
 # 启动命令，运行编译后的应用
 CMD ["node", "dist/main"]
