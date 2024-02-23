@@ -10,6 +10,8 @@ COPY package.json pnpm-lock.yaml ./
 
 # 安装仅生产环境的依赖
 RUN npm install -g pnpm
+# 配置镜像源
+RUN pnpm config set registry https://registry.npmmirror.com
 RUN pnpm install --prod
 
 # 复制构建好的 dist 目录
