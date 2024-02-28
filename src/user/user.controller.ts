@@ -35,10 +35,10 @@ export class UserController {
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.userService.update(+id, updateUserDto);
   }
-  @Public()
-  @Post('search')
-  search(@Body() body) {
-    console.log(body)
-    return this.userService.search(body);
-  }
+  // @Public()
+  // @Post('search')
+  // search(@Body() body) {
+  //   console.log(body)
+  //   return this.userService.search(body);
+  // }
 }

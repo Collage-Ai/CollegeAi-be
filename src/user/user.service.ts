@@ -10,7 +10,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryService } from 'src/category/category.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SmsService } from './sms.service';
-const searchEngineTool = require('search-engine-tool'); // 确保这个库是安装并可以在你的环境中运行的
 
 @Injectable()
 export class UserService {
@@ -113,15 +112,15 @@ export class UserService {
  * @param {string} {query,engine}
  * @return {string}
  */
-  async search(body:any): Promise<any> {
-    const {query, engine} = body;
-    try {
-      const results = await searchEngineTool(query, engine);
-      return results;
-    } catch (error) {
-      throw new Error('搜索失败: ' + error.message);
-    }
-  }
+  // async search(body:any): Promise<any> {
+  //   const {query, engine} = body;
+  //   try {
+  //     const results = await searchEngineTool(query, engine);
+  //     return results;
+  //   } catch (error) {
+  //     throw new Error('搜索失败: ' + error.message);
+  //   }
+  // }
 
  //生成随机6位数验证码
   createCode() {
