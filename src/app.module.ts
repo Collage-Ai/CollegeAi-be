@@ -22,7 +22,7 @@ import { Category } from './category/entities/category.entity';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      envFilePath: `.env.${process.env.NODE_ENV}`,
+      //envFilePath: `.env.${process.env.NODE_ENV}`,
     }),
     UserModule,
     //AuthModule, // 包含 AuthService
