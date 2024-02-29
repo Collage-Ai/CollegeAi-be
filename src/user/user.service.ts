@@ -18,7 +18,7 @@ export class UserService {
     private readonly categoryService: CategoryService,
     private readonly smsService: SmsService,
   ) {}
-  private smsCode:Record<string, string> = {};
+  private smsCode: Record<string, string> = {};
 
   async create(createUserDto: CreateUserDto): Promise<string> {
     try {
@@ -62,7 +62,7 @@ export class UserService {
   }
 
   //获取短信验证码
- async sendCode(phone:string): Promise<string> {
+  async sendCode(phone: string): Promise<string> {
     //生成随机6位数验证码
     let code = this.createCode();
     //调用短信服务发送短信
@@ -91,14 +91,16 @@ export class UserService {
   //更新用户信息
   async update(id: number, updateUserDto: UpdateUserDto) {
     try {
-      const userToUpdate = await this.userRepository.findOne({ where: { id: id } });
+      const userToUpdate = await this.userRepository.findOne({
+        where: { id: id },
+      });
       if (!userToUpdate) {
         throw new BadRequestException('用户不存在');
       }
-  
+
       // 手动赋值属性以确保正确复制所有需要更新的字段
       Object.assign(userToUpdate, updateUserDto);
-  
+
       // 保存更新后的用户信息
       return await this.userRepository.save(userToUpdate);
     } catch (e) {
@@ -108,10 +110,10 @@ export class UserService {
     }
   }
   /**
- * @description: 搜索
- * @param {string} {query,engine}
- * @return {string}
- */
+   * @description: 搜索
+   * @param {string} {query,engine}
+   * @return {string}
+   */
   // async search(body:any): Promise<any> {
   //   const {query, engine} = body;
   //   try {
@@ -122,9 +124,8 @@ export class UserService {
   //   }
   // }
 
- //生成随机6位数验证码
+  //生成随机6位数验证码
   createCode() {
     return Math.random().toString().slice(-6);
   }
 }
-
