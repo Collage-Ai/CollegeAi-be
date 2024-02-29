@@ -9,8 +9,8 @@ export class SmsService {
   private client: Dysmsapi20170525;
 
   constructor() {
-    const accessKeyId = process.env['ALIBABA_CLOUD_ACCESS_KEY_ID']; // 从环境变量中读取
-    const accessKeySecret = process.env['ALIBABA_CLOUD_ACCESS_KEY_SECRET']; // 从环境变量中读取
+    const accessKeyId = process.env['ALIBABA_CLOUD_ACCESS_KEY_ID']||"LTAI5tRNJ7yGSriugnR4oU9E"; // 从环境变量中读取
+    const accessKeySecret = process.env['ALIBABA_CLOUD_ACCESS_KEY_SECRET']||"3KXaH5lQBhyGCWCNtF69e5I1pAORKw"; // 从环境变量中读取
     const config = new $OpenApi.Config({
       accessKeyId,
       accessKeySecret,
