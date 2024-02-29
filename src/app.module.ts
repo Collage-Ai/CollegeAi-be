@@ -22,7 +22,7 @@ import { Category } from './category/entities/category.entity';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      //envFilePath: `.env.${process.env.NODE_ENV}`,
+      envFilePath: `.env`,
     }),
     UserModule,
     //AuthModule, // 包含 AuthService
@@ -33,7 +33,7 @@ import { Category } from './category/entities/category.entity';
       username: process.env.DB_USERNAME || 'root',
       password: process.env.DB_PASSWORD || 'root',
       database: process.env.DB_NAME || 'hwtest',
-      entities: [User,Chat,Skill,Category],
+      entities: [User, Chat, Skill, Category],
       charset: 'utf8mb4',
       logging: true,
       logger: 'advanced-console',
