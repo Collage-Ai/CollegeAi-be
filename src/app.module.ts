@@ -29,9 +29,11 @@ import { Category } from './category/entities/category.entity';
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: process.env.DB_HOST || 'localhost',
+      //host: '116.62.6.49',
       port: Number(process.env.DB_PORT) || 3306,
       username: process.env.DB_USERNAME || 'root',
-      password: process.env.DB_PASSWORD || 'oHebzRN2BnkhJ7KJk4mm',
+      password: process.env.DB_PASSWORD || 'C4X@D*atND9sV*zMGTUg',
+      //password: 'oHebzRN2BnkhJ7KJk4mm',
       database: process.env.DB_NAME || 'ai',
       entities: [User, Chat, Skill, Category],
       charset: 'utf8mb4',
