@@ -37,4 +37,16 @@ export class User {
 
   @Column()
   advantage: string;
+
+  @Column({type:'json'})
+  skillPoint1: string;
+
+  @Column({type:'json'})
+  skillPoint2: string;
+
+  @Column({type:'json'})
+  skillPoint3: string;
+
+  @Column({type:'json'})
+  stageAnalysis: string;
 }
