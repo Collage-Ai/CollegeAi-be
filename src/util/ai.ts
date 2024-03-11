@@ -8,15 +8,13 @@ const openai = new OpenAI({
   baseURL: process.env.API_URL,
 });
 
-async function getAIResponse(userInfo: string,prompt=stagePrompt) {
-  // Non-streaming:
+async function getAIResponse(userInfo: string, prompt = stagePrompt) {
   const completion = await openai.chat.completions.create({
     model: 'gpt-3.5-turbo',
-    messages: [{ role: 'user', content: 'Say this is a test' }],
+    messages: [prompt, { role: 'user', content: `用户信息为${userInfo}` }],
   });
   console.log(completion.choices[0]?.message?.content);
   return completion.choices[0]?.message?.content;
 }
-
 
 export { getAIResponse };
