@@ -10,6 +10,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryService } from 'src/category/category.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SmsService } from './sms.service';
+import { getAIResponse, sendCloudFnRequest } from 'src/util/ai';
 
 @Injectable()
 export class UserService {
@@ -33,7 +34,14 @@ export class UserService {
 
       await this.userRepository.save(user); // 确保等待异步操作完成
       await this.categoryService.addInitChatCategories(user.id);
-
+      const skillPoint = await sendCloudFnRequest({
+        query:user.career,
+        isSort:false,
+        type:'activity',
+        userInfo:JSON.stringify(user),
+        field:user.career
+      })
+      const stageAnalysis = await getAIResponse(JSON.stringify(user));
       return '注册成功'; // 直接返回对象，简化代码
     } catch (e) {
       // 根据错误类型进行不同的处理

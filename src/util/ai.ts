@@ -1,4 +1,3 @@
-#!/usr/bin/env -S npm run tsn -T
 
 import OpenAI from 'openai';
 import { stagePrompt } from './prompt';
@@ -26,7 +25,7 @@ interface RequestOptions {
   field: string;
 }
 
-async function sendRequest(options: RequestOptions): Promise<AxiosResponse> {
+async function sendCloudFnRequest(options: RequestOptions): Promise<AxiosResponse> {
   const { query, isSort, type, userInfo, field } = options;
   const url = `https://htmlpng-mo-tfoormcbnb.cn-hangzhou.fcapp.run?query=${encodeURIComponent(query)}&isSort=${isSort}&type=${encodeURIComponent(type)}&userInfo=${encodeURIComponent(userInfo)}&field=${encodeURIComponent(field)}`;
   try {
@@ -48,4 +47,4 @@ async function sendRequest(options: RequestOptions): Promise<AxiosResponse> {
 // });
 
 
-export { getAIResponse };
+export { getAIResponse,sendCloudFnRequest };
