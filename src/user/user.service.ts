@@ -27,7 +27,7 @@ export class UserService {
       if (userExist) {
         throw new BadRequestException('用户已存在'); // 使用具体的异常类型
       }
-
+      
       // 使用对象传递简化代码
       const user = this.userRepository.create(createUserDto);
 

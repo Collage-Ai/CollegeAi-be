@@ -20,10 +20,10 @@ import { Category } from './category/entities/category.entity';
 
 @Module({
   imports: [
-    // ConfigModule.forRoot({
-    //   isGlobal: true,
-    //   envFilePath: `.env.dev`,
-    // }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: `.env.dev`,
+    }),
     UserModule,
     //AuthModule, // 包含 AuthService
     TypeOrmModule.forRoot({
@@ -32,7 +32,7 @@ import { Category } from './category/entities/category.entity';
       //host: '116.62.6.49',
       port: Number(process.env.DB_PORT) || 3306,
       username: process.env.DB_USERNAME || 'root',
-      password: process.env.DB_PASSWORD || 'C4X@D*atND9sV*zMGTUg',
+      password: process.env.DB_PASSWORD || '123456',
       //password: 'oHebzRN2BnkhJ7KJk4mm',
       database: process.env.DB_NAME || 'ai',
       entities: [User, Chat, Skill, Category],
