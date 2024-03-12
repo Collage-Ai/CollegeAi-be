@@ -3,6 +3,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
+import { OnEvent } from '@nestjs/event-emitter';
 import { CreateUserDto, registerInfo } from './dto/create-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -11,11 +12,12 @@ import { CategoryService } from 'src/category/category.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SmsService } from './sms.service';
 import { getAIResponse, sendCloudFnRequest } from 'src/util/ai';
-
+import { EventEmitter2 } from 'eventemitter2';
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private userRepository: Repository<User>,
+    private eventEmitter: EventEmitter2, // 注入事件发射器
     private readonly categoryService: CategoryService,
     private readonly smsService: SmsService,
   ) {}
@@ -33,15 +35,9 @@ export class UserService {
       const user = this.userRepository.create(createUserDto);
 
       await this.userRepository.save(user); // 确保等待异步操作完成
+      this.eventEmitter.emit('user.registered', new UserRegisteredAskAiEvent(user.id, user)); // 发射事件
       await this.categoryService.addInitChatCategories(user.id);
-      const skillPoint = await sendCloudFnRequest({
-        query:user.career,
-        isSort:false,
-        type:'activity',
-        userInfo:JSON.stringify(user),
-        field:user.career
-      })
-      const stageAnalysis = await getAIResponse(JSON.stringify(user));
+      
       return '注册成功'; // 直接返回对象，简化代码
     } catch (e) {
       // 根据错误类型进行不同的处理
@@ -135,5 +131,33 @@ export class UserService {
   //生成随机6位数验证码
   createCode() {
     return Math.random().toString().slice(-6);
+  }
+}
+
+// 定义事件
+class UserRegisteredAskAiEvent {
+  constructor(public readonly userId: number, public readonly userInfo:User ) {}
+}
+
+// 定义事件处理器
+@Injectable()
+export class UserRegisteredAskAiHandler {
+  @OnEvent('user.registered')
+  handleUserRegisteredEvent(event: UserRegisteredAskAiEvent) {
+    // 这里可以并发执行长时间运行的任务，不会阻塞用户注册
+    Promise.all([
+     sendCloudFnRequest({
+        query: event.userInfo.career,
+        isSort:false,
+        type:'activity',
+        userInfo:JSON.stringify(event.userInfo),
+        field:event.userInfo.career
+      })
+       ,getAIResponse(JSON.stringify(event.userInfo))
+    ]).then(([skillPoint, stageAnalysis]) => {
+      
+    }).catch(error => {
+      // 处理错误
+    });
   }
 }
