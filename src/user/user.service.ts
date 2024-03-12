@@ -3,7 +3,6 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common';
-import { OnEvent } from '@nestjs/event-emitter';
 import { CreateUserDto, registerInfo } from './dto/create-user.dto';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -11,7 +10,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryService } from 'src/category/category.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SmsService } from './sms.service';
-import { getAIResponse, sendCloudFnRequest } from 'src/util/ai';
 import { EventEmitter2 } from 'eventemitter2';
 import { UserRegisteredAskAiEvent } from './askAi.service';
 @Injectable()
