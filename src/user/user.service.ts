@@ -13,6 +13,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { SmsService } from './sms.service';
 import { getAIResponse, sendCloudFnRequest } from 'src/util/ai';
 import { EventEmitter2 } from 'eventemitter2';
+import { UserRegisteredAskAiEvent } from './askAi.service';
 @Injectable()
 export class UserService {
   constructor(
@@ -35,7 +36,7 @@ export class UserService {
       const user = this.userRepository.create(createUserDto);
 
       await this.userRepository.save(user); // 确保等待异步操作完成
-      this.eventEmitter.emit('user.registered', new UserRegisteredAskAiEvent(user.id, user)); // 发射事件
+      this.eventEmitter.emit('user.registered', new UserRegisteredAskAiEvent(user.phone, user)); // 发射事件
       await this.categoryService.addInitChatCategories(user.id);
       
       return '注册成功'; // 直接返回对象，简化代码
@@ -134,30 +135,3 @@ export class UserService {
   }
 }
 
-// 定义事件
-class UserRegisteredAskAiEvent {
-  constructor(public readonly userId: number, public readonly userInfo:User ) {}
-}
-
-// 定义事件处理器
-@Injectable()
-export class UserRegisteredAskAiHandler {
-  @OnEvent('user.registered')
-  handleUserRegisteredEvent(event: UserRegisteredAskAiEvent) {
-    // 这里可以并发执行长时间运行的任务，不会阻塞用户注册
-    Promise.all([
-     sendCloudFnRequest({
-        query: event.userInfo.career,
-        isSort:false,
-        type:'activity',
-        userInfo:JSON.stringify(event.userInfo),
-        field:event.userInfo.career
-      })
-       ,getAIResponse(JSON.stringify(event.userInfo))
-    ]).then(([skillPoint, stageAnalysis]) => {
-      
-    }).catch(error => {
-      // 处理错误
-    });
-  }
-}
