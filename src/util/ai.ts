@@ -27,9 +27,15 @@ interface RequestOptions {
 
 async function sendCloudFnRequest(options: RequestOptions): Promise<AxiosResponse> {
   const { query, isSort, type, userInfo, field } = options;
-  const url = `https://htmlpng-mo-tfoormcbnb.cn-hangzhou.fcapp.run?query=${encodeURIComponent(query)}&isSort=${isSort}&type=${encodeURIComponent(type)}&userInfo=${encodeURIComponent(userInfo)}&field=${encodeURIComponent(field)}`;
+  const url = `https://htmlpng-mo-tfoormcbnb.cn-hangzhou.fcapp.run`;
   try {
-    const response = await axios.post(url);
+    const response = await axios.post(url, {
+      query,
+      isSort,
+      type,
+      userInfo,
+      field,
+    });
     console.log(response.data);
     return response.data;
   } catch (error) {
