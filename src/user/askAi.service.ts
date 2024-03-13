@@ -1,5 +1,5 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
-import { sendCloudFnRequest, getAIResponse } from 'src/util/ai';
+import { sendCloudFnRequest, getAIResponse, processActivityData } from 'src/util/ai';
 import { User } from './entities/user.entity';
 import { OnEvent } from '@nestjs/event-emitter';
 import { UserService } from './user.service';
@@ -33,12 +33,13 @@ export class UserRegisteredAskAiHandler {
     ])
       .then(([skillPoint, stageAnalysis]) => {
         const initialUser = this.usersService.findOne(event.userPhone);
+        let formatedSkillPoint = processActivityData(skillPoint)
         let user = new UpdateUserDto();
         user = {
           ...initialUser,
-          skillPoint1: skillPoint,
-          SkillPoint2: skillPoint,
-          SkillPoint3: skillPoint,
+          skillPoint1: formatedSkillPoint[0],
+          SkillPoint2: formatedSkillPoint[1],
+          SkillPoint3: formatedSkillPoint[2],
           stageAnalysis: stageAnalysis,
         };
         this.usersService.update(event.userInfo.id, user);
