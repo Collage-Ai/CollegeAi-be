@@ -2,7 +2,7 @@
 import OpenAI from 'openai';
 import { stagePrompt } from './prompt';
 import axios, { AxiosResponse } from 'axios';
-import { ActivityData } from './type';
+import { ActivityData, ActivityInfo } from './type';
 // gets API Key from environment variable OPENAI_API_KEY
 const openai = new OpenAI({
   apiKey: process.env.API_KEY,
@@ -72,9 +72,18 @@ function processActivityData(data: any): ActivityData[] {
           item = [item];
       }
 
-      // 过滤掉任何不符合活动信息结构的数据项
-      return item.filter((activity) => typeof activity === 'object' && '活动名称' in activity);
+      const processedData = data.map(group => ({
+        ...group,
+        content: group.content.filter(activity => validateActivity(activity))
+    }));
+
+    return processedData;
   });
+}
+
+function validateActivity(activity: ActivityInfo): boolean {
+  // 确保活动对象中的所有字段都是非空字符串
+  return Object.values(activity).every(value => typeof value === 'string' && value.trim() !== '');
 }
 
 

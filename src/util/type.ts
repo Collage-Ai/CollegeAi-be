@@ -58,7 +58,11 @@ export type ActivityInfo = {
   活动地点: string;
   活动简介: string;
   参与方式: string;
+  link: string;
 };
 
 // 定义数据可能是单个活动信息，也可能是活动信息数组的联合类型
-export type ActivityData = ActivityInfo | ActivityInfo[];
+export type ActivityData = {
+  name: string;
+  content: ActivityInfo[]|ActivityInfo;
+};
