@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { LoginUserDto, LoginUserResponse } from './dto/login-user.dto';
 import { loginMessage } from 'src/user/dto/login-user.dto';
 import { UpdateUserDto } from 'src/user/dto/update-user.dto';
+import { CreateUserDto } from 'src/user/dto/create-user.dto';
 
 @Injectable()
 export class AuthService {
@@ -107,7 +108,7 @@ export class AuthService {
  * @param {string} token
  * @return {UpdateUserDto} 用户信息
  */
-async getInfo(phone: string): Promise<UpdateUserDto> {
+async getInfo(phone: string): Promise<UpdateUserDto|CreateUserDto> {
   try {
     const user = await this.userService.findOne(phone);
     return user;
