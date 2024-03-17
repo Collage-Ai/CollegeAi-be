@@ -150,10 +150,11 @@ export class UserRegisteredAskAiHandler {
   @OnEvent('user.registered')
   handleUserRegisteredEvent(event: UserRegisteredAskAiEvent) {
     console.log('用户注册后AI分析开始', event.userInfo);
-    this.handleEventWithRetry(event, 3);
+    this.handleEventWithRetry(event, 1);
   }
 
   async getAIResponse(userInfo: string, prompt = stagePrompt): Promise<string> {
+    console.log('用户信息为', userInfo);
     const completion = await this.openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
       messages: [
@@ -177,6 +178,7 @@ export class UserRegisteredAskAiHandler {
     ])
       .then(([skillPoint, stageAnalysis]) => {
         let formatedSkillPoint = processActivityData(skillPoint);
+        console.log('formated',formatedSkillPoint)
         this.usersService.findOne(event.userPhone).then((initialUser) => {
           let userUpdate: UpdateUserDto = {
             ...initialUser,
