@@ -185,13 +185,25 @@ export class UserRegisteredAskAiHandler {
           this.usersService.update(event.userInfo.id, userUpdate);
         });
         formatedSkillPoint.forEach((item, index) => {
-          this.skillService.create({
-            userId: event.userInfo.id,
-            title: item.name,
-            description: item.content,
-            type: `技能点${index + 1}`,
-            category: 0,
-          });
+          if (Array.isArray(item)) {
+            item.forEach((item) => {
+              this.skillService.create({
+                userId: event.userInfo.id,
+                title: item.name,
+                description: item.content,
+                type: `技能点${index + 1}`,
+                category: 0,
+              });
+            });
+          }else{
+            this.skillService.create({
+              userId: event.userInfo.id,
+              title: item.name,
+              description: item.content,
+              type: `技能点${index + 1}`,
+              category: 0,
+            });
+          }
         });
       })
       .catch((error) => {
