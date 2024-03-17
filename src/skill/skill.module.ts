@@ -10,5 +10,6 @@ import { Skill } from './entities/skill.entity';
   ],
   controllers: [SkillController],
   providers: [SkillService],
+  exports: [SkillService],
 })
 export class SkillModule {}
