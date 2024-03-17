@@ -138,8 +138,9 @@ export class UserRegisteredAskAiEvent {
 // 定义事件处理器
 @Injectable()
 export class UserRegisteredAskAiHandler {
+  private readonly openai: OpenAI
   constructor(private readonly usersService: UserService,
-    private readonly openai: OpenAI
+    
     ) {
       this.openai = new OpenAI({
         apiKey: process.env.API_KEY,
@@ -157,7 +158,7 @@ export class UserRegisteredAskAiHandler {
   async getAIResponse(userInfo: string, prompt=stagePrompt): Promise<string> {
     const completion = await this.openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
-      messages: [{ role: 'system', content: prompt }, { role: 'user', content: `用户信息为${userInfo}` }],
+      messages: [{ role: 'system', content: JSON.stringify(prompt) }, { role: 'user', content: `用户信息为${JSON.stringify(userInfo)}` }],
     });
     console.log(completion.choices[0]?.message?.content);
     return completion.choices[0]?.message?.content;
