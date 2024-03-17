@@ -184,27 +184,19 @@ export class UserRegisteredAskAiHandler {
           };
           this.usersService.update(event.userInfo.id, userUpdate);
         });
-        formatedSkillPoint.forEach((item, index) => {
-          if (Array.isArray(item)) {
-            item.forEach((item) => {
-              this.skillService.create({
-                userId: event.userInfo.id,
-                title: item.name,
-                description: item.content,
-                type: `技能点${index + 1}`,
-                category: 0,
-              });
-            });
-          }else{
+        formatedSkillPoint.forEach((skill, index) => {
+          // 遍历每个技能的 content 数组
+          skill.content.forEach((activity) => {
             this.skillService.create({
               userId: event.userInfo.id,
-              title: item.name,
-              description: item.content,
+              title: skill.name, // 技能点名称
+              description: JSON.stringify(activity), // 活动信息作为描述，转为字符串保存
               type: `技能点${index + 1}`,
               category: 0,
             });
-          }
+          });
         });
+        
       })
       .catch((error) => {
         console.error('用户注册后AI分析失败', error);

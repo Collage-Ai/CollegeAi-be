@@ -42,25 +42,26 @@ async function sendCloudFnRequest(options: RequestOptions): Promise<AxiosRespons
 function processActivityData(data: any): ActivityData[] {
   // 处理每个数据项，确保其格式化为活动信息数组
   return data.map((item) => {
-      // 如果数据项是字符串，尝试将其解析为JSON
-      if (typeof item === 'string') {
-          try {
-              item = JSON.parse(item);
-          } catch (error) {
-              console.error('JSON解析失败:', error);
-              // 解析失败时返回空数组
-              return [];
-          }
+    // 如果数据项是字符串，尝试将其解析为JSON
+    if (typeof item === 'string') {
+      try {
+        item = JSON.parse(item);
+      } catch (error) {
+        console.error('JSON解析失败:', error);
+        // 解析失败时返回空数组
+        return [];
       }
+    }
 
-      // 确保数据项是数组格式，如果不是则将其包装在数组中
-      if (!Array.isArray(item)) {
-          item = [item];
-      }
+    // 确保数据项是数组格式，如果不是则将其包装在数组中
+    if (!Array.isArray(item)) {
+      item = [item];
+    }
 
-      const processedData = data.map(group => ({
-        ...group,
-        content: group.content.filter(activity => validateActivity(activity))
+    // 过滤并处理数据项
+    const processedData = item.map(group => ({
+      ...group,
+      content: group.content.filter(validateActivity)
     }));
 
     return processedData;
