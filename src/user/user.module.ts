@@ -8,9 +8,10 @@ import { CategoryModule } from 'src/category/category.module';
 import { SmsService } from './sms.service';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { UserRegisteredAskAiHandler } from './user.service';
+import { SkillModule } from 'src/skill/skill.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([User]), forwardRef(() => AuthModule),CategoryModule,EventEmitterModule.forRoot()],
+  imports: [TypeOrmModule.forFeature([User]), forwardRef(() => AuthModule),CategoryModule,EventEmitterModule.forRoot(),SkillModule],
   controllers: [UserController],
   providers: [UserService,SmsService,UserRegisteredAskAiHandler],
   exports: [UserService, TypeOrmModule.forFeature([User])],

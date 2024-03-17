@@ -11,12 +11,10 @@ import { CategoryService } from 'src/category/category.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SmsService } from './sms.service';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
-import {
-  sendCloudFnRequest,
-  processActivityData,
-} from 'src/util/ai';
+import { sendCloudFnRequest, processActivityData } from 'src/util/ai';
 import OpenAI from 'openai';
 import { stagePrompt } from 'src/util/prompt';
+import { SkillService } from 'src/skill/skill.service';
 @Injectable()
 export class UserService {
   constructor(
@@ -138,15 +136,16 @@ export class UserRegisteredAskAiEvent {
 // 定义事件处理器
 @Injectable()
 export class UserRegisteredAskAiHandler {
-  private readonly openai: OpenAI
-  constructor(private readonly usersService: UserService,
-    
-    ) {
-      this.openai = new OpenAI({
-        apiKey: process.env.API_KEY,
-        baseURL: process.env.API_URL,
-      });
-    }
+  private readonly openai: OpenAI;
+  constructor(
+    private readonly usersService: UserService,
+    private readonly skillService: SkillService,
+  ) {
+    this.openai = new OpenAI({
+      apiKey: process.env.API_KEY,
+      baseURL: process.env.API_URL,
+    });
+  }
 
   @OnEvent('user.registered')
   handleUserRegisteredEvent(event: UserRegisteredAskAiEvent) {
@@ -154,11 +153,13 @@ export class UserRegisteredAskAiHandler {
     this.handleEventWithRetry(event, 3);
   }
 
-
-  async getAIResponse(userInfo: string, prompt=stagePrompt): Promise<string> {
+  async getAIResponse(userInfo: string, prompt = stagePrompt): Promise<string> {
     const completion = await this.openai.chat.completions.create({
       model: 'gpt-3.5-turbo',
-      messages: [{ role: 'system', content: JSON.stringify(prompt) }, { role: 'user', content: `用户信息为${JSON.stringify(userInfo)}` }],
+      messages: [
+        { role: 'system', content: JSON.stringify(prompt) },
+        { role: 'user', content: `用户信息为${JSON.stringify(userInfo)}` },
+      ],
     });
     console.log(completion.choices[0]?.message?.content);
     return completion.choices[0]?.message?.content;
@@ -175,16 +176,22 @@ export class UserRegisteredAskAiHandler {
       this.getAIResponse(JSON.stringify(event.userInfo)),
     ])
       .then(([skillPoint, stageAnalysis]) => {
+        let formatedSkillPoint = processActivityData(skillPoint);
         this.usersService.findOne(event.userPhone).then((initialUser) => {
-          let formatedSkillPoint = processActivityData(skillPoint);
           let userUpdate: UpdateUserDto = {
             ...initialUser,
-            skillPoint1: formatedSkillPoint[0],
-            skillPoint2: formatedSkillPoint[1], // 注意字段名大小写的一致性
-            skillPoint3: formatedSkillPoint[2],
             stageAnalysis: stageAnalysis,
           };
           this.usersService.update(event.userInfo.id, userUpdate);
+        });
+        formatedSkillPoint.forEach((item, index) => {
+          this.skillService.create({
+            userId: event.userInfo.id,
+            title: item.name,
+            description: item.content,
+            type: `技能点${index + 1}`,
+            category: 0,
+          });
         });
       })
       .catch((error) => {
