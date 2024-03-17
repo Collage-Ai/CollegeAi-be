@@ -3,20 +3,6 @@ import OpenAI from 'openai';
 import { stagePrompt } from './prompt';
 import axios, { AxiosResponse } from 'axios';
 import { ActivityData, ActivityInfo } from './type';
-// gets API Key from environment variable OPENAI_API_KEY
-const openai = new OpenAI({
-  apiKey: process.env.API_KEY,
-  baseURL: process.env.API_URL,
-});
-
-async function getAIResponse(userInfo: string, prompt = stagePrompt) {
-  const completion = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo',
-    messages: [prompt, { role: 'user', content: `用户信息为${userInfo}` }],
-  });
-  console.log(completion.choices[0]?.message?.content);
-  return completion.choices[0]?.message?.content;
-}
 
 interface RequestOptions {
   query: string;
@@ -87,4 +73,6 @@ function validateActivity(activity: ActivityInfo): boolean {
 }
 
 
-export { getAIResponse,sendCloudFnRequest,processActivityData };
+export { sendCloudFnRequest,processActivityData };
+
+// console.log(getAIResponse('一名大三的学生，来自985大学，目前有一段运营实习，有一段产品实习，目标是产品经理，喜欢探索人性和产品，有一些技术基础。'))

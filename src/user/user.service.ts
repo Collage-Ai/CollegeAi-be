@@ -13,9 +13,10 @@ import { SmsService } from './sms.service';
 import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
 import {
   sendCloudFnRequest,
-  getAIResponse,
   processActivityData,
 } from 'src/util/ai';
+import OpenAI from 'openai';
+import { stagePrompt } from 'src/util/prompt';
 @Injectable()
 export class UserService {
   constructor(
@@ -137,7 +138,14 @@ export class UserRegisteredAskAiEvent {
 // 定义事件处理器
 @Injectable()
 export class UserRegisteredAskAiHandler {
-  constructor(private readonly usersService: UserService) {}
+  constructor(private readonly usersService: UserService,
+    private readonly openai: OpenAI
+    ) {
+      this.openai = new OpenAI({
+        apiKey: process.env.API_KEY,
+        baseURL: process.env.API_URL,
+      });
+    }
 
   @OnEvent('user.registered')
   handleUserRegisteredEvent(event: UserRegisteredAskAiEvent) {
@@ -145,6 +153,15 @@ export class UserRegisteredAskAiHandler {
     this.handleEventWithRetry(event, 3);
   }
 
+
+  async getAIResponse(userInfo: string, prompt=stagePrompt): Promise<string> {
+    const completion = await this.openai.chat.completions.create({
+      model: 'gpt-3.5-turbo',
+      messages: [{ role: 'system', content: prompt }, { role: 'user', content: `用户信息为${userInfo}` }],
+    });
+    console.log(completion.choices[0]?.message?.content);
+    return completion.choices[0]?.message?.content;
+  }
   handleEventWithRetry(event: UserRegisteredAskAiEvent, retries: number) {
     Promise.all([
       sendCloudFnRequest({
@@ -154,7 +171,7 @@ export class UserRegisteredAskAiHandler {
         userInfo: JSON.stringify(event.userInfo),
         field: event.userInfo.career,
       }),
-      getAIResponse(JSON.stringify(event.userInfo)),
+      this.getAIResponse(JSON.stringify(event.userInfo)),
     ])
       .then(([skillPoint, stageAnalysis]) => {
         this.usersService.findOne(event.userPhone).then((initialUser) => {
