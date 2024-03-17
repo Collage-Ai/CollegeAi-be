@@ -11,8 +11,8 @@ export class Skill {
   @Column()
   title: string; // 技能名称
 
-  @Column()
-  description: string; // 技能描述
+  @Column({type: 'json'})
+  description: any; // 技能描述
 
   @Column()
   type: string; // 技能类型

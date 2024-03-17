@@ -1,7 +1,7 @@
 export class CreateSkillDto {
   userId: number;
   title: string;
-  description: string;
+  description: any;
   type: string;
   category: number;
 }

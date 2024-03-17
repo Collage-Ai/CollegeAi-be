@@ -3,20 +3,6 @@ import OpenAI from 'openai';
 import { stagePrompt } from './prompt';
 import axios, { AxiosResponse } from 'axios';
 import { ActivityData, ActivityInfo } from './type';
-// gets API Key from environment variable OPENAI_API_KEY
-const openai = new OpenAI({
-  apiKey: process.env.API_KEY,
-  baseURL: process.env.API_URL,
-});
-
-async function getAIResponse(userInfo: string, prompt = stagePrompt) {
-  const completion = await openai.chat.completions.create({
-    model: 'gpt-3.5-turbo',
-    messages: [prompt, { role: 'user', content: `用户信息为${userInfo}` }],
-  });
-  console.log(completion.choices[0]?.message?.content);
-  return completion.choices[0]?.message?.content;
-}
 
 interface RequestOptions {
   query: string;
@@ -53,38 +39,52 @@ async function sendCloudFnRequest(options: RequestOptions): Promise<AxiosRespons
 //   field: '产品经理'
 // });
 // 函数用于处理并格式化活动数据
+
+function validateActivity(activity: any): boolean {
+  // 示例验证逻辑
+  return activity.hasOwnProperty('活动名称') && activity['活动名称'] !== '';
+}
+
 function processActivityData(data: any): ActivityData[] {
-  // 处理每个数据项，确保其格式化为活动信息数组
+  if (typeof data === 'string') {
+    // 如果数据是字符串，尝试将其解析为JSON
+    try {
+      data = JSON.parse(data);
+    } catch (error) {
+      console.error('JSON解析失败:', error);
+      return [];
+    }
+  }
+
+  // 确保数据是数组格式，如果不是则将其包装在数组中
+  if (!Array.isArray(data)) {
+    data = [data];
+  }
+
   return data.map((item) => {
-      // 如果数据项是字符串，尝试将其解析为JSON
-      if (typeof item === 'string') {
-          try {
-              item = JSON.parse(item);
-          } catch (error) {
-              console.error('JSON解析失败:', error);
-              // 解析失败时返回空数组
-              return [];
-          }
+    if (typeof item === 'string') {
+      // 再次检查数据项是否为字符串，尝试解析JSON
+      try {
+        item = JSON.parse(item);
+      } catch (error) {
+        console.error('JSON解析失败:', error);
+        return [];
       }
+    }
 
-      // 确保数据项是数组格式，如果不是则将其包装在数组中
-      if (!Array.isArray(item)) {
-          item = [item];
-      }
+    // 对每个技能点的内容进行过滤和验证
+    const processedContent = item.content ? item.content.filter(validateActivity) : [];
 
-      const processedData = data.map(group => ({
-        ...group,
-        content: group.content.filter(activity => validateActivity(activity))
-    }));
-
-    return processedData;
+    // 返回格式化后的技能点数据
+    return {
+      ...item,
+      content: processedContent
+    };
   });
 }
 
-function validateActivity(activity: ActivityInfo): boolean {
-  // 确保活动对象中的所有字段都是非空字符串
-  return Object.values(activity).every(value => typeof value === 'string' && value.trim() !== '');
-}
 
 
-export { getAIResponse,sendCloudFnRequest,processActivityData };
+export { sendCloudFnRequest,processActivityData };
+
+// console.log(getAIResponse('一名大三的学生，来自985大学，目前有一段运营实习，有一段产品实习，目标是产品经理，喜欢探索人性和产品，有一些技术基础。'))
