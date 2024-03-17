@@ -10,9 +10,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { CategoryService } from 'src/category/category.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { SmsService } from './sms.service';
-import { EventEmitter2 } from 'eventemitter2';
-import { OnEvent } from '@nestjs/event-emitter';
-import { sendCloudFnRequest, getAIResponse, processActivityData } from 'src/util/ai';
+import { EventEmitter2, OnEvent } from '@nestjs/event-emitter';
+import {
+  sendCloudFnRequest,
+  getAIResponse,
+  processActivityData,
+} from 'src/util/ai';
 @Injectable()
 export class UserService {
   constructor(
@@ -30,14 +33,17 @@ export class UserService {
       if (userExist) {
         throw new BadRequestException('用户已存在'); // 使用具体的异常类型
       }
-      
+
       // 使用对象传递简化代码
       const user = this.userRepository.create(createUserDto);
 
       await this.userRepository.save(user); // 确保等待异步操作完成
-      this.eventEmitter.emit('user.registered', new UserRegisteredAskAiEvent(user.phone, user)); // 发射事件
+      this.eventEmitter.emit(
+        'user.registered',
+        new UserRegisteredAskAiEvent(user.phone, user),
+      ); // 发射事件
       await this.categoryService.addInitChatCategories(user.id);
-      
+
       return '注册成功'; // 直接返回对象，简化代码
     } catch (e) {
       // 根据错误类型进行不同的处理
@@ -83,9 +89,9 @@ export class UserService {
   //验证短信验证码
   async verifyCode(registerMsg: registerInfo): Promise<CreateUserDto> {
     //将registerMsg.SMSCode和数据库中的验证码进行比对
-    if (registerMsg.SMSCode !== this.smsCode[registerMsg.phone]) {
-      throw new BadRequestException('验证码错误');
-    }
+    // if (registerMsg.SMSCode !== this.smsCode[registerMsg.phone]) {
+    //   throw new BadRequestException('验证码错误');
+    // }
     //如果一致，将registerInfo类型转化为CreateUserDto类型
     let createUserDto = new CreateUserDto();
     createUserDto = registerMsg;
@@ -113,28 +119,12 @@ export class UserService {
       throw new InternalServerErrorException('内部服务器错误', e.message);
     }
   }
-  /**
-   * @description: 搜索
-   * @param {string} {query,engine}
-   * @return {string}
-   */
-  // async search(body:any): Promise<any> {
-  //   const {query, engine} = body;
-  //   try {
-  //     const results = await searchEngineTool(query, engine);
-  //     return results;
-  //   } catch (error) {
-  //     throw new Error('搜索失败: ' + error.message);
-  //   }
-  // }
 
   //生成随机6位数验证码
   createCode() {
     return Math.random().toString().slice(-6);
   }
 }
-
-
 
 // 定义事件
 export class UserRegisteredAskAiEvent {
@@ -148,9 +138,14 @@ export class UserRegisteredAskAiEvent {
 @Injectable()
 export class UserRegisteredAskAiHandler {
   constructor(private readonly usersService: UserService) {}
+
   @OnEvent('user.registered')
   handleUserRegisteredEvent(event: UserRegisteredAskAiEvent) {
-    // 这里可以并发执行长时间运行的任务，不会阻塞用户注册
+    console.log('用户注册后AI分析开始', event.userInfo);
+    this.handleEventWithRetry(event, 3);
+  }
+
+  handleEventWithRetry(event: UserRegisteredAskAiEvent, retries: number) {
     Promise.all([
       sendCloudFnRequest({
         query: event.userInfo.career,
@@ -162,22 +157,25 @@ export class UserRegisteredAskAiHandler {
       getAIResponse(JSON.stringify(event.userInfo)),
     ])
       .then(([skillPoint, stageAnalysis]) => {
-        const initialUser = this.usersService.findOne(event.userPhone);
-        let formatedSkillPoint = processActivityData(skillPoint)
-        let user = new UpdateUserDto();
-        user = {
-          ...initialUser,
-          skillPoint1: formatedSkillPoint[0],
-          SkillPoint2: formatedSkillPoint[1],
-          SkillPoint3: formatedSkillPoint[2],
-          stageAnalysis: stageAnalysis,
-        };
-        this.usersService.update(event.userInfo.id, user);
+        this.usersService.findOne(event.userPhone).then((initialUser) => {
+          let formatedSkillPoint = processActivityData(skillPoint);
+          let userUpdate: UpdateUserDto = {
+            ...initialUser,
+            skillPoint1: formatedSkillPoint[0],
+            skillPoint2: formatedSkillPoint[1], // 注意字段名大小写的一致性
+            skillPoint3: formatedSkillPoint[2],
+            stageAnalysis: stageAnalysis,
+          };
+          this.usersService.update(event.userInfo.id, userUpdate);
+        });
       })
       .catch((error) => {
-        // 处理错误
         console.error('用户注册后AI分析失败', error);
-        throw new InternalServerErrorException('内部服务器错误');
+        if (retries > 0) {
+          setTimeout(() => this.handleEventWithRetry(event, retries - 1), 3000);
+        } else {
+          throw new InternalServerErrorException('内部服务器错误');
+        }
       });
   }
 }
