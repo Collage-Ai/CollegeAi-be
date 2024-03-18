@@ -88,9 +88,9 @@ export class UserService {
   //验证短信验证码
   async verifyCode(registerMsg: registerInfo): Promise<CreateUserDto> {
     //将registerMsg.SMSCode和数据库中的验证码进行比对
-    // if (registerMsg.SMSCode !== this.smsCode[registerMsg.phone]) {
-    //   throw new BadRequestException('验证码错误');
-    // }
+    if (registerMsg.SMSCode !== this.smsCode[registerMsg.phone]) {
+      throw new BadRequestException('验证码错误');
+    }
     //如果一致，将registerInfo类型转化为CreateUserDto类型
     let createUserDto = new CreateUserDto();
     createUserDto = registerMsg;
@@ -150,7 +150,7 @@ export class UserRegisteredAskAiHandler {
   @OnEvent('user.registered')
   handleUserRegisteredEvent(event: UserRegisteredAskAiEvent) {
     console.log('用户注册后AI分析开始', event.userInfo);
-    this.handleEventWithRetry(event, 1);
+    this.handleEventWithRetry(event, 3);
   }
 
   async getAIResponse(userInfo: string, prompt = stagePrompt): Promise<string> {
