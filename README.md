@@ -42,7 +42,7 @@ $ pnpm run test:cov
 
 ## 方式二：dockerhub
 
-在本地打包docker镜像，然后上传到dockerhub，然后在Rancher上拉取镜像，即可部署。
+在本地打包docker镜像，然后上传到dockerhub，然后拉取镜像，即可部署。
 
 ### 本地打包docker镜像
 
@@ -51,17 +51,17 @@ Dockerfile参考本仓库根目录下的Dockerfile。
 后运行以下命令：
 
 ```bash
-docker build -t t1-backend .
+docker build -t collegeAi-backend .
 ```
 
 ### 上传到dockerhub
 
 ```bash
-docker tag t1-backend:latest ncuhome/t1-backend:latest
-docker push ncuhome/t1-backend:latest
+docker tag t1-backend:latest xxx/collegeAi-backend:latest
+docker push xxx/collegeAi-backend:latest
 ```
 
-### 在Rancher上拉取镜像
+<!-- ### 在Rancher上拉取镜像
 
 Rancher使用参考：
 [Docker/Podman]
@@ -70,4 +70,4 @@ Rancher使用参考：
 
 同时记得手动配置一下数据库。
 
-> 记录一下，以备后用。
+> 记录一下，以备后用。 -->
