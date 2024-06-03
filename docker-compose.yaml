@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  backend:
+    image:   # 使用你的后端Docker镜像
+    # ports:
+    #   - "3000:3000"  # 将容器的8080端口映射到宿主机的8080端口
+    network_mode: "host"
+    restart: always
+    volumes:
+      - /var/log/docker-compose:/app/logs
+    environment:
+      - API_URL=
+      - API_KEY=
+      - DB_HOST=localhost
+      - DB_PORT=3306
+      - DB_NAME=
+      - DB_USERNAME=root
+      - DB_PASSWORD=
+      - ALIBABA_CLOUD_ACCESS_KEY_ID=
+      - ALIBABA_CLOUD_ACCESS_KEY_SECRET=

@@ -38,7 +38,7 @@ $ pnpm run test:cov
 
 ## 方式一： self-hosted runner
 
-配置好github action的self-hosted runner，然后在服务器上运行runner，即可自动部署。但由于未给NCUHOME-Y开通self-hosted runner，所以暂时无法使用该方式部署。
+配置好github action的self-hosted runner，然后在服务器上运行runner，即可自动部署。
 
 ## 方式二：dockerhub
 
@@ -61,6 +61,14 @@ docker tag t1-backend:latest xxx/collegeAi-backend:latest
 docker push xxx/collegeAi-backend:latest
 ```
 
+## 数据库及环境变量部分
+需要配置数据库，本项目使用的后端数据库为MySQL,数据库初始化语句参见db目录下。
+运行docker-compose.yaml文件启动镜像，
+```
+docker-compose up
+```
+本项目使用服务器自带的数据库环境，如未配置，可安装或自行拉取数据库镜像。
+环境变量参见docker-compose.yaml文件，由于发送短信等功能使用阿里云sdk,该部分功能需配置阿里云密钥等。
 <!-- ### 在Rancher上拉取镜像
 
 Rancher使用参考：
